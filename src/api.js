@@ -17,7 +17,7 @@ export async function getSurahs(){
 }
 
 export async function getAyahs(noSurah){
-    const url = API_URL + `/surah/${noSurah}/editions/quran-uthmani,id.indonesian`
+    const url = API_URL + `/surah/${noSurah}/editions/quran-unicode,id.indonesian`
     const res = await fetch(url)
     const data = await res.json()
     const [texts, translations] = data.data
@@ -30,7 +30,7 @@ export async function getAyahs(noSurah){
 } 
 
 export async function getSurahInfo(noSurah) {
-    const url = API_URL + `/surah/${noSurah}/editions/quran-uthmani,id.indonesian`
+    const url = API_URL + `/surah/${noSurah}/editions/quran-unicode,id.indonesian`
     const res = await fetch(url)
     const raw = await res.json()
     // console.log(raw.data[noSurah+1])
