@@ -1,81 +1,46 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import { getSurahs, getAyahs, getSurahInfo } from './api';
+import { getSurahs } from './api';
+import useSurah from './hooks/surah'
 import AyahBox from './components/AyahBox.vue';
 import Surah from './components/Surah.vue';
 
 
-function getCurrentSurah(){
-  const currentURL = new URL(window.location.href)
-  const c = currentURL.searchParams.get("surah")
-  
-  if (c === null){
-    return c
-  }else {
-    return 1
-  }
-}
-
 const surahs = ref([])
-const content = ref(0)
-const currentSurah = ref(1)
-const surahInfo = ref(0)
+const {surah, changeSurah} = useSurah()
 
-function updateSurah (surahNumber) {
-  updateActive(surahNumber, currentSurah.value)
-  updateContent(surahNumber)
+function updateActive(num){
+  surahs.value[surah.value.number-1].isActive = false
+  changeSurah(num)
+  surahs.value[surah.value.number-1].isActive = true
 }
 
-function updateActive(cur, prev) {
-  surahs.value[prev-1].isActive = false
-  surahs.value[cur-1].isActive = true
-
-  console.log(surahs.value[cur])
-}
-
-function updateContent (surahNumber) {
-  getAyahs(surahNumber).then(res => content.value = res)
-  getSurahInfo(surahNumber).then(res => surahInfo.value = res)
-  
-  currentSurah.value = surahNumber
-
-  
-}
-onMounted(()=>{
-  getSurahs().then(res => {
-    res[currentSurah.value-1].isActive = true 
-    surahs.value = res
-  })
-  updateContent(currentSurah.value)
+onMounted(async ()=>{
+  surahs.value = await getSurahs()
+  updateActive(1)
 })
 </script>
 
 <template>
   <div class="container">
     <div class="surah-container">
-      <Surah 
-        v-for="surah in surahs" 
-        :surahNumber="surah.number" 
-        :surahName="surah.name" 
-        :literalName="surah.literal_name" 
-        :ayahAmount="surah.ayah_amount" 
-        :translation="surah.translation"
-        :isActive="surah.isActive"
-        @change-surah="(n) => updateSurah(n)"
+      <Surah v-for="surah in surahs" :surah="surah" @change-surah="(n) => updateActive(n)"
       />
     </div>
     <div class="surah">
       <div class="surah-info">
         <div class="info-left">
-          <div class="english-name">{{ surahInfo.englishName}}</div>
-          <div class="literal">{{ surahInfo.name }}</div>
-          <div class="translation">{{ surahInfo.translation }}</div>
-          <div class="ayah-amount">{{ surahInfo.ayahAmount }} ayat</div>
-          <div class="revelation">dari {{ surahInfo.revelation }}</div>
+          <template v-if="surah.info">
+            <div class="english-name">{{ surah.info.englishName}}</div>
+            <div class="literal">{{ surah.info.name }}</div>
+            <div class="translation">{{ surah.info.translation }}</div>
+            <div class="ayah-amount">{{ surah.info.ayahAmount }} ayat</div>
+            <div class="revelation">dari {{ surah.info.revelation }}</div>
+          </template> 
         </div>
-        <div class="info-right arabic">{{ surahInfo.number }}</div>
+        <div class="info-right arabic" v-if="surah.info">{{ surah.info.number }}</div>
       </div>
-      <AyahBox v-for="ayah in content" :ayahNumber="ayah.number" :ayahLiteral="ayah.ayah" :ayahTranslation="ayah.translation"></AyahBox>
+      <AyahBox v-if="surah.content" v-for="ayah in surah.content" :ayah="ayah"/>
     </div>
   </div>
 </template>
