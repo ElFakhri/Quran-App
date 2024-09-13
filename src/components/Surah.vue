@@ -1,25 +1,17 @@
 <script setup>
-import {store} from  "../store.js"
 const props = defineProps({
-    surahNumber: {type: Number},
-    surahName: {type: String},
-    literalName: {type: String},
-    ayahAmount: {type: Number},
-    translation: {type: String},
-    isActive: {type: Boolean, default: false}
+    surah: Object
 })
 
-if (props.isActive){
-    console.log(props.surahName)
-}
+const surah = props.surah;
 </script>
 
 <template>
-    <div class="surah-box" :class="props.isActive ? 'surah-active' : null" @click="$emit('changeSurah', props.surahNumber)">
-        <div class="first-row">{{ surahNumber }}. {{ surahName }}</div>
+    <div class="surah-box" :class="surah.isActive ? 'surah-active' : null" @click="$emit('changeSurah', surah.number)">
+        <div class="first-row">{{ surah.number }}. {{ surah.name }}</div>
         <div class="last-row">
-            <div>{{translation}}</div>
-            <div>{{ ayahAmount }} ayahs</div>
+            <div>{{ surah.translation}}</div>
+            <div>{{ surah.ayah_amount }} ayahs</div>
         </div>
     </div>
 </template>
