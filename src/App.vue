@@ -52,25 +52,24 @@ onMounted(async ()=>{
 }
 
 .surah-container {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  /* left: 0px; */
+  position: sticky;
+  top:0;
   overflow-y: scroll;
-  padding: 10px;
+  height: 100vh;
   border-radius: 10px;
 }
 
 .surah {
-  margin: 0px 50px 0px 300px;
+  padding: 10px 30px;
+  width: 100%;
 }
 
 .surah-info {
   display: flex;
   flex-direction: row;
   justify-content: space-between ;
-  /* position: sticky; */
-  /* top: 3px; */
+  position: sticky;
+  top: 3px;
   background-color: rgb(179, 241, 220);
   border: 1px solid rgb(0, 81, 54);
   padding: 16px;
